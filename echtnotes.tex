@@ -1,0 +1,267 @@
+% \PassOptionsToPackage{table}{xcolor}
+\documentclass[notitlepage, 12pt]{article}
+\date{}
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+{\normalfont\bfseries}{}{0pt}{\Large}
+
+\usepackage{titling}   
+\usepackage{marginnote}
+\usepackage[paper=a4paper,top=1in, left=1in, right=1in, bottom=1in,  heightrounded,
+marginparwidth=1in, marginparsep=3mm]{geometry}
+\usepackage[dvipsnames]{xcolor}
+
+\usepackage{amsthm, amssymb, amsfonts, amsmath}
+\usepackage{graphicx, tikz, hyperref, enumitem, mathrsfs, tikz-cd, adjustbox, xfrac, stackrel,MnSymbol, multicol }
+\usetikzlibrary{calc,shapes}
+\usepackage[fleqn,tbtags]{mathtools}
+
+\usepackage{nameref}
+\usepackage{wrapfig}
+\usepackage{faktor}
+\usepackage{bbold}
+\usepackage{float}
+\usepackage{todonotes}
+\usepackage{parskip}
+\usepackage{cleveref}
+\usepackage{eucal}
+
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\hh}{\mathcal{H}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\kx}{k[X_n]}
+\DeclareMathOperator{\depth}{depth}
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem*{claim}{Claim}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\newcommand{\rnc}[1]
+    {\MakeUppercase{\romannumeral #1}}
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\war}{wr}
+\DeclareMathOperator{\lt}{lt}
+\DeclareMathOperator{\mon}{Mon}
+
+% Set link colors for labeled items (blue), citations (red), URLs (orange)
+\hypersetup{colorlinks=true, linkcolor=Red, citecolor=RedOrange, urlcolor=ForestGreen}
+
+\makeatletter
+\newtheoremstyle{para}
+  {\topsep}   % ABOVESPACE
+  {\topsep}   % BELOWSPACE
+  {\upshape}  % BODYFONT
+  {0pt}       % INDENT (empty value is the same as 0pt)
+  {\bfseries} % HEADFONT
+  {.}         % HEADPUNCT
+  {5pt plus 1pt minus 1pt} % HEADSPACE
+  {\thmnumber{#2}\@ifnotempty{#3}{ \thmnote{#3}}} % CUSTOM-HEAD-SPEC
+\makeatother
+
+\theoremstyle{para}
+\newtheorem{para}[theorem]{}
+\newtheorem*{para*}{para}
+\makeatletter
+\newcommand{\namelabel}[1]{%
+  \phantomsection
+  \renewcommand{\@currentlabel}{#1}% Update the label text/name
+  \label{#1}% Set the label
+}
+\makeatother
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty}
+
+\usepackage[T1]{fontenc}
+% \usepackage{newtxtext,newtxmath}
+\usepackage{libertine,libertinust1math}
+\usepackage[most]{tcolorbox}
+\makeatletter
+\newcommand*{\toccontents}{\@starttoc{toc}}
+\makeatother
+%\usepackage[nottoc,notlot,notlof]{tocbibind}
+\usepackage{etoolbox}
+
+
+\newcommand{\leftrarrows}{\mathrel{\raise.75ex\hbox{\oalign{%
+  $\scriptstyle\leftarrow$\cr
+  \vrule width0pt height.5ex$\hfil\scriptstyle\relbar$\cr}}}}
+\newcommand{\lrightarrows}{\mathrel{\raise.75ex\hbox{\oalign{%
+  $\scriptstyle\relbar$\hfil\cr
+  $\scriptstyle\vrule width0pt height.5ex\smash\rightarrow$\cr}}}}
+\newcommand{\Rrelbar}{\mathrel{\raise.75ex\hbox{\oalign{%
+  $\scriptstyle\relbar$\cr
+  \vrule width0pt height.5ex$\scriptstyle\relbar$}}}}
+\newcommand{\longleftrightarrows}{\leftrarrows\joinrel\Rrelbar\joinrel\lrightarrows}
+
+\makeatletter
+\def\leftrightarrowsfill@{\arrowfill@\leftrarrows\Rrelbar\lrightarrows}
+\newcommand{\xleftrightarrows}[2][]{\ext@arrow 3399\leftrightarrowsfill@{#1}{#2}}
+\makeatother
+
+\begin{document}
+\begin{titlepage}
+    \title{eCHT course on Stable Homotopy Theory
+}
+\author{\normalsize Naren\\
+\normalsize University of Kentucky\\
+\normalsize Spring 2024}
+	\maketitle
+	\thispagestyle{empty}
+    	\toccontents
+\end{titlepage}
+\pagebreak
+\marginnote{L3, 23/1}
+\section{Homotpy limits and colimits }
+\subsection{Motivation}
+Notation: $\mathcal{C}$ homotopical category. $\mathcal{M}$ model category. 
+
+Usual limits colimts use $1$-category structure. usual notion of colimits cannot be correct for topological structure. 
+
+$\mathrm{colim } : Top \to Top$ is not homotopical functor. 
+
+We want to give a modern correct formulation for this. A cofibrant replacement in the correct sense. 
+
+\subsection{Preliminaries}
+\begin{definition}
+    A left deformation of $\mathcal{C}$ is an endofunctor 
+    \[
+         Q: \mathcal{C}\to \mathcal{C}
+    \] together with a natural weak equivalence  
+    \[
+         \eta: Q \xrightarrow[ ]{\simeq }\mathrm{ id }_\mathcal{C}
+    \]
+    $\mathcal{C}_{Q}$ full subcat of $\mathcal{X}$ that contains image of $Q$. 
+\end{definition}
+in model cat $\mathcal{C}_ Q$ is the category of cofibrant objects. 
+
+\begin{definition}
+    A left deformation of a functor $F: \mathcal{C} \to \mathcal{D}$. is a left derived functor $$q: Q\to \mathrm{id }_ \mathcal{C}$$ of $\mathcal{C}$ and a choice of $\mathcal{C}_Q$ such that $F$ is homotopical on $C_Q$. 
+\end{definition}
+\begin{example}
+    If $M$ is a model cat. $F$ is left Quillen, then the cofibrant replacement is a left def of $F$ by Ken Brown lemma 
+\end{example}
+\begin{example}
+    $M=CGWH$. 
+    Fact: CW complexes are cofibrant. 
+\end{example}
+\begin{theorem}
+     If $q: Q\implies id $ is a left def of $F: C\to D$, tehn 
+     \[
+         LF= FQ 
+     \]is a left derived functor of F. 
+\end{theorem}
+\begin{proof}
+     2.2.8 Riehl 
+\end{proof}
+
+\subsection{Homotopy colimts}
+Let $J$ be small cat 
+\begin{definition}
+    the homotopy colimit functor, if it exists, is a left derived functor 
+    \[
+         \operatorname{hocolim}:=\mathbb{L}\operatorname{colim} : \mathcal{C}^J \to \mathcal{C}
+    \] of $\operatorname{colim} :\mathcal{C}^J\to \mathcal{C}$. 
+
+    To producte it find a left deformation functor $Q$ of $\mathcal{C}$ and consider $FQ$. 
+\end{definition}
+
+{\bf David's recap}\marginnote{L4 25/1}
+
+We can compute the left derived functor of $F: C\to D$ between homotpical categories using a left def $Q: C\to C, q: Q\implies 1$ such that $F\vert_{\mathrm{im}  Q}$ is a homotpical functor by $\mathbb{L}F=FQ$. 
+
+In $\mathop{\mathrm{Top }}, Q$ is CW approximation 
+in $CH(R)$ $Q$ is projective resolution 
+
+$\mathop{\mathrm{ colim }}: C^I \to C$ wher $C^I$ homotopical cat with pointwise weak equivalence . Then we copmute $\mathop{\mathrm{hocolim }}=\mathbb{L}\mathop{\mathrm{ colim }}$ using a bar complex. 
+
+Homotopy pushouts: $\mathop{\mathrm{ hocolim}} Z\leftarrow X\to Y$ replace one of the morphisms with a cofibration. so the above is $\mathop{\mathrm{colim }}(QZ\leftarrow QX \to QY)$
+
+you replace one of the objects with $Q(-)$ and then use the cofibration factorization on the other. But in top you only need one of $f$ and $g$ to be made into cofibration.   
+
+\marginnote{L5 30/1}
+\section{Stable phenomenon of Spaces }
+Spaces of interest -$\mathrm{Top} $,$\mathrm{Top_{\ast}}$ 
+These spaces arenot closed under products,even for CW complexes. $\mathrm{ CGWH } $ is a cateogry that satisfies these properties and we take these to mean spaces. 
+
+\begin{definition}
+  $(X,\cdot),(Y,\cdot)\in \mathrm{Top_{\ast }} $ Define $Y^X$ to be maps and $F(X,Y)$to be pointed maps equipped with compactopen topology. 
+
+  Smash Product defined. 
+\end{definition}
+
+  $(\mathrm{Top_{\ast} } ,\wedge, S^0)$ make a closedsymmetric monoidal category. Internal $\hom=F(X,Y)$. 
+
+  $\hom_{\mathrm{Top } }(X\wedge Y,Z)\cong \hom(X,F(Y,Z))$. 
+ $F(X\wedge Y ,Z)\cong F(X,(Y,Z))$. 
+
+
+$\pi_0(F(X,Y),\ast)\cong [S^0,F(X,Y)]\cong [X,Y]$
+
+If we choose $Y=S^1$, then we get $F(\Sigma X,Z)\cong F(X,\Omega Z)$. If you apply yne $\pi_0$ functor we get homootpy classes of maps bijection.  in general $-\wedge Z \dashv F(-,Z)$
+
+$\Sigma X$ is the pushout of $\ast \leftarrow X\to \ast$. 
+
+$\Omega X$ is the pullback of $\ast \to X\leftarrow \ast$. 
+
+$\Omega X$ is an $H$ group. $\Sigma X$ gives a co $H$ group structure. 
+
+If $Y$ is a $H$ group then $[-,Y]$ is a group. If $X$ is a co gropu then $[X,Y]$ is a group. So the loopspace suspension adjunction is an isomorphism. 
+
+If $[X,y]$ for $X$ co H group and $Y$ $H$ group, then $[X,Y]$ is an abelian group. 
+
+Freudenthal Suspension Theorem 
+
+$\Sigma :\pi_n(X)\to \pi_{n+1 }(\Sigma X)$ is an isomorphism for $0\leq i\leq 2n$ and epimorphism for $i=2n+1$. 
+
+$\mathop{\mathrm{colim }}(\pi_{i+n+1 (\Sigma^n X)})=\pi_i^s(X)$ is the $i^{\text{th}  }$ stablehomotpy group. If we take $X=S^^0$, it is called 
+$i$th stable stem. 
+
+$\pi^*(S)$ is a graded ring, with graded commutativestructure\dots
+
+$X\to \Omega \Sigma X$, is $(2n+1)$ connected if $X$ is $n$-connected. 
+
+Define $QX=\mathop{\mathrm{colim }}(X\to \Omega \Sigma X\to (\Omega \Sigma)^2X\to \cdots )$ $\pi_*(QX)=\pi_*^s(X)$. 
+
+Excision does nothold for $X=S^2,A=X\N, B=X\S$ and $A\cap B=S^1$. then $\pi_3(A,A\cap B)\cong \pi_2(S^1)=0$ and $\pi_3(S^2, B)\cong \pi_3(S^2)\neq 0$. 
+
+Excision holds for higher homtopy groups upto connectivity. 
+
+\begin{theorem}[Blaker's Massey Excision ]
+If $X=A\cup B$, $A\cap B\neq \varphi$ and $A, C$ is $m$ connected and $(B,C)$ is $n$ connected
+\[
+  \pi_i(A,C)\xrightarrow[ ]{i_* }\pi_i(X,B)
+\] isomorphism for $i<m+n$ and surjective for $i=m+n$. 
+\end{theorem}
+
+\begin{theorem}
+     If 
+     \[
+      \begin{tikzcd}
+Q \arrow[dd, "m-connected"'] \arrow[rr, "n-connected"] \arrow[rd, "h\, m+n-1 connected" description, dashed] &                          & Y \arrow[dd] \\
+                                                                                                          & F \arrow[ld] \arrow[ru] &              \\
+X \arrow[rr]                                                                                              &                          & P           
+\end{tikzcd}
+     \] here $F$ is the pullback of the inner square. his gives a version of van kampen. 
+
+\end{theorem}
+\begin{corollary}
+  $X=\ast$. $Q\xrightarrow[ ]{g }Y \xrightarrow[ ]{c }P$ $Q$ is $m$ connected and $g$, $n$ connected. Then $\mathop{\mathrm{hofib }}=F$ $Q\to F$ is $m+n$ connected 
+\end{corollary}
+
+If $X,Y$ are $p$, $q$, connected then $X\vee Y \to X\times Y$ is $p+q+1$ connected.
+
+\begin{theorem}{Hurewicz Theorem }
+  fsdafasjkdfhljkh
+\end{theorem}
+\end{document}
